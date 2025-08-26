@@ -23,6 +23,7 @@ const Index: React.FC = () => {
   const [levelScore, setLevelScore] = useState(0);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
   const [levelCompleted, setLevelCompleted] = useState(false);
+  const [levelCompletedShown, setLevelCompletedShown] = useState(false);
 
   const handleStartGame = useCallback(() => {
     setShowDifficultySelection(true);
@@ -53,6 +54,7 @@ const Index: React.FC = () => {
     setCurrentLevel(nextLevel);
     setLevelCompleted(false);
     setLevelScore(0);
+    setLevelCompletedShown(false); // Reset for next level
     
     toast(`🎯 Starting Level ${nextLevel}!`, {
       description: `New challenge awaits!`,
@@ -60,6 +62,9 @@ const Index: React.FC = () => {
   }, [currentLevel]);
 
   const handleLevelComplete = useCallback(() => {
+    // Prevent multiple calls for same level completion
+    if (levelCompletedShown) return;
+    
     const bonus = currentLevel * 100;
     const newTotalScore = totalScore + levelScore + bonus;
 
@@ -70,6 +75,7 @@ const Index: React.FC = () => {
     setTotalScore(newTotalScore);
     setLevelScore(0);
     setLevelCompleted(true);
+    setLevelCompletedShown(true);
 
     toast(`🎊 Level ${currentLevel} Complete!`, {
       description: `Bonus: +${bonus} points | Choose your next action`,
@@ -81,6 +87,7 @@ const Index: React.FC = () => {
         label: "Stay Here",
         onClick: () => {
           setLevelCompleted(false);
+          setLevelCompletedShown(false);
           toast("👍 Continue playing this level!", {
             description: "You can replay or try for a higher score"
           });
@@ -88,7 +95,7 @@ const Index: React.FC = () => {
       },
       duration: 10000, // Keep open longer for user decision
     });
-  }, [currentLevel, totalScore, levelScore, completedLevels, handleNextLevel]);
+  }, [currentLevel, totalScore, levelScore, completedLevels, handleNextLevel, levelCompletedShown]);
 
   const handleLevelSelectOpen = () => setShowLevelSelection(true);
   const handleLevelSelectClose = () => setShowLevelSelection(false);
@@ -97,6 +104,7 @@ const Index: React.FC = () => {
     setCurrentLevel(level);
     setLevelScore(0);
     setLevelCompleted(false);
+    setLevelCompletedShown(false); // Reset for new level
     setShowLevelSelection(false);
     toast(`🎯 Starting Level ${level}!`, {
       description: `Get ready for the challenge!`,
