@@ -56,12 +56,10 @@ const Index: React.FC = () => {
     }
 
     setTotalScore(newTotalScore);
-    const nextLevel = currentLevel + 1;
-    setCurrentLevel(nextLevel);
     setLevelScore(0);
 
     toast(`🎊 Level ${currentLevel} Complete!`, {
-      description: `Bonus: +${bonus} points | Starting Level ${nextLevel}!`,
+      description: `Bonus: +${bonus} points | Level unlocked for replay!`,
     });
   }, [currentLevel, totalScore, levelScore, completedLevels]);
 
