@@ -22,6 +22,7 @@ const Index: React.FC = () => {
   const [totalScore, setTotalScore] = useState(0);
   const [levelScore, setLevelScore] = useState(0);
   const [completedLevels, setCompletedLevels] = useState<number[]>([]);
+  const [levelCompleted, setLevelCompleted] = useState(false);
 
   const handleStartGame = useCallback(() => {
     setShowDifficultySelection(true);
@@ -57,11 +58,23 @@ const Index: React.FC = () => {
 
     setTotalScore(newTotalScore);
     setLevelScore(0);
+    setLevelCompleted(true);
 
     toast(`🎊 Level ${currentLevel} Complete!`, {
-      description: `Bonus: +${bonus} points | Level unlocked for replay!`,
+      description: `Bonus: +${bonus} points | Ready for next level!`,
     });
   }, [currentLevel, totalScore, levelScore, completedLevels]);
+
+  const handleNextLevel = useCallback(() => {
+    const nextLevel = currentLevel + 1;
+    setCurrentLevel(nextLevel);
+    setLevelCompleted(false);
+    setLevelScore(0);
+    
+    toast(`🎯 Starting Level ${nextLevel}!`, {
+      description: `New challenge awaits!`,
+    });
+  }, [currentLevel]);
 
   const handleLevelSelectOpen = () => setShowLevelSelection(true);
   const handleLevelSelectClose = () => setShowLevelSelection(false);
@@ -69,6 +82,7 @@ const Index: React.FC = () => {
   const handleLevelChange = (level: number) => {
     setCurrentLevel(level);
     setLevelScore(0);
+    setLevelCompleted(false);
     setShowLevelSelection(false);
     toast(`🎯 Starting Level ${level}!`, {
       description: `Get ready for the challenge!`,
@@ -133,8 +147,23 @@ const Index: React.FC = () => {
             onScoreUpdate={handleScoreUpdate}
             onLevelComplete={handleLevelComplete}
             currentLevel={currentLevel}
+            levelCompleted={levelCompleted}
           />
         </div>
+
+        {/* Next Level Button */}
+        {levelCompleted && (
+          <div className="flex justify-center mt-4">
+            <Button 
+              variant="default" 
+              size="lg"
+              onClick={handleNextLevel}
+              className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary transition-all duration-300"
+            >
+              🚀 Next Level ({currentLevel + 1})
+            </Button>
+          </div>
+        )}
 
         {/* ✅ Ad Banner */}
         <div className="my-4">

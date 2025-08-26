@@ -38,11 +38,12 @@ interface GameBoardProps {
   onScoreUpdate: (score: number) => void;
   onLevelComplete: () => void;
   currentLevel: number;
+  levelCompleted?: boolean;
 }
 
 const BOARD_SIZE = 8;
 
-export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate, onLevelComplete, currentLevel }) => {
+export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate, onLevelComplete, currentLevel, levelCompleted = false }) => {
   // Get difficulty settings
   const getDifficultySettings = useCallback(() => {
     switch (difficulty) {
@@ -366,14 +367,21 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       setShowFireworks(true);
       playLevelCompleteSound();
       
-      // Auto progress to next level after celebration
+      // Just show fireworks, let parent handle progression
       setTimeout(() => {
         setShowFireworks(false);
-        setGameComplete(false);
         onLevelComplete();
-      }, 4000); // Extended delay for fireworks + next level display
+      }, 3000);
     }
   }, [score, gameComplete, onLevelComplete, playLevelCompleteSound, targetScore, showFireworks]);
+
+  // Reset game state when level changes or when level is completed
+  useEffect(() => {
+    if (levelCompleted) {
+      setGameComplete(false);
+      setShowFireworks(false);
+    }
+  }, [levelCompleted]);
 
   // Reset board when level changes
   useEffect(() => {
