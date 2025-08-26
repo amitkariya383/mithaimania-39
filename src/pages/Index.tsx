@@ -48,6 +48,17 @@ const Index: React.FC = () => {
     setLevelScore(score);
   }, []);
 
+  const handleNextLevel = useCallback(() => {
+    const nextLevel = currentLevel + 1;
+    setCurrentLevel(nextLevel);
+    setLevelCompleted(false);
+    setLevelScore(0);
+    
+    toast(`🎯 Starting Level ${nextLevel}!`, {
+      description: `New challenge awaits!`,
+    });
+  }, [currentLevel]);
+
   const handleLevelComplete = useCallback(() => {
     const bonus = currentLevel * 100;
     const newTotalScore = totalScore + levelScore + bonus;
@@ -61,20 +72,23 @@ const Index: React.FC = () => {
     setLevelCompleted(true);
 
     toast(`🎊 Level ${currentLevel} Complete!`, {
-      description: `Bonus: +${bonus} points | Ready for next level!`,
+      description: `Bonus: +${bonus} points | Choose your next action`,
+      action: {
+        label: "🚀 Next Level",
+        onClick: () => handleNextLevel(),
+      },
+      cancel: {
+        label: "Stay Here",
+        onClick: () => {
+          setLevelCompleted(false);
+          toast("👍 Continue playing this level!", {
+            description: "You can replay or try for a higher score"
+          });
+        },
+      },
+      duration: 10000, // Keep open longer for user decision
     });
-  }, [currentLevel, totalScore, levelScore, completedLevels]);
-
-  const handleNextLevel = useCallback(() => {
-    const nextLevel = currentLevel + 1;
-    setCurrentLevel(nextLevel);
-    setLevelCompleted(false);
-    setLevelScore(0);
-    
-    toast(`🎯 Starting Level ${nextLevel}!`, {
-      description: `New challenge awaits!`,
-    });
-  }, [currentLevel]);
+  }, [currentLevel, totalScore, levelScore, completedLevels, handleNextLevel]);
 
   const handleLevelSelectOpen = () => setShowLevelSelection(true);
   const handleLevelSelectClose = () => setShowLevelSelection(false);
@@ -150,20 +164,6 @@ const Index: React.FC = () => {
             levelCompleted={levelCompleted}
           />
         </div>
-
-        {/* Next Level Button */}
-        {levelCompleted && (
-          <div className="flex justify-center mt-4">
-            <Button 
-              variant="default" 
-              size="lg"
-              onClick={handleNextLevel}
-              className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary transition-all duration-300"
-            >
-              🚀 Next Level ({currentLevel + 1})
-            </Button>
-          </div>
-        )}
 
         {/* ✅ Ad Banner */}
         <div className="my-4">
