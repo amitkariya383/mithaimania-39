@@ -1,0 +1,202 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Mithai Mania Design System - Indian Festival Theme
+All colors are HSL for perfect theming */
+
+/* Festival Colors Palette */
+
+@layer base {
+  :root {
+    /* Festival Background */
+    --background: 342 45% 97%;
+    --foreground: 15 25% 15%;
+
+    /* Card & Surface Colors */
+    --card: 45 100% 96%;
+    --card-foreground: 15 25% 15%;
+
+    --popover: 45 100% 98%;
+    --popover-foreground: 15 25% 15%;
+
+    /* Golden Saffron Primary */
+    --primary: 45 95% 55%;
+    --primary-foreground: 45 100% 98%;
+
+    /* Festival Red Secondary */
+    --secondary: 0 75% 60%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Warm Muted Tones */
+    --muted: 35 25% 88%;
+    --muted-foreground: 15 15% 45%;
+
+    /* Festival Blue Accent */
+    --accent: 210 85% 65%;
+    --accent-foreground: 210 100% 98%;
+
+    /* Warning/Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Borders & Inputs */
+    --border: 35 35% 85%;
+    --input: 35 35% 85%;
+    --ring: 45 95% 55%;
+
+    /* Design System Extensions */
+    --festival-orange: 25 95% 65%;
+    --festival-green: 140 70% 55%;
+    --festival-purple: 280 75% 65%;
+    --festival-pink: 320 80% 70%;
+    
+    /* Gradients */
+    --gradient-festival: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--festival-orange)), hsl(var(--secondary)));
+    --gradient-celebration: linear-gradient(45deg, hsl(var(--festival-green)), hsl(var(--accent)), hsl(var(--festival-purple)));
+    --gradient-warm: linear-gradient(180deg, hsl(var(--primary) / 0.1), hsl(var(--festival-orange) / 0.05));
+    
+    /* Shadows */
+    --shadow-festive: 0 8px 32px hsl(var(--primary) / 0.25);
+    --shadow-warm: 0 4px 16px hsl(var(--festival-orange) / 0.15);
+    --shadow-game: 0 2px 8px hsl(var(--secondary) / 0.2);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark Festival Theme */
+    --background: 15 25% 8%;
+    --foreground: 45 100% 95%;
+
+    --card: 15 25% 12%;
+    --card-foreground: 45 100% 95%;
+
+    --popover: 15 25% 10%;
+    --popover-foreground: 45 100% 95%;
+
+    --primary: 45 95% 65%;
+    --primary-foreground: 15 25% 8%;
+
+    --secondary: 0 75% 55%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 15 15% 18%;
+    --muted-foreground: 35 15% 65%;
+
+    --accent: 210 85% 60%;
+    --accent-foreground: 210 100% 95%;
+
+    --destructive: 0 84% 55%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 15 15% 22%;
+    --input: 15 15% 22%;
+    --ring: 45 95% 65%;
+
+    /* Dark theme gradients */
+    --gradient-festival: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--festival-orange)), hsl(var(--secondary)));
+    --gradient-celebration: linear-gradient(45deg, hsl(var(--festival-green)), hsl(var(--accent)), hsl(var(--festival-purple)));
+    --gradient-warm: linear-gradient(180deg, hsl(var(--primary) / 0.15), hsl(var(--festival-orange) / 0.08));
+    
+    --shadow-festive: 0 8px 32px hsl(var(--primary) / 0.3);
+    --shadow-warm: 0 4px 16px hsl(var(--festival-orange) / 0.2);
+    --shadow-game: 0 2px 8px hsl(var(--secondary) / 0.25);
+
+    --sidebar-background: 15 25% 8%;
+    --sidebar-foreground: 45 100% 95%;
+    --sidebar-primary: 45 95% 65%;
+    --sidebar-primary-foreground: 15 25% 8%;
+    --sidebar-accent: 15 15% 18%;
+    --sidebar-accent-foreground: 45 100% 95%;
+    --sidebar-border: 15 15% 22%;
+    --sidebar-ring: 45 95% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    background: linear-gradient(135deg, hsl(var(--background)), hsl(var(--background) / 0.95));
+  }
+
+  /* Festival Patterns */
+  .pattern-dots {
+    background-image: radial-gradient(circle, hsl(var(--primary) / 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .pattern-mandala {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f59e0b' fill-opacity='0.05'%3E%3Cpath d='M30 30m-20 0a20 20 0 1 1 40 0a20 20 0 1 1 -40 0'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+}
+
+@layer utilities {
+  .text-gradient-festival {
+    background: var(--gradient-festival);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .shadow-festive {
+    box-shadow: var(--shadow-festive);
+  }
+
+  .shadow-warm {
+    box-shadow: var(--shadow-warm);
+  }
+
+  .shadow-game {
+    box-shadow: var(--shadow-game);
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-celebration {
+    animation: celebration 0.6s ease-out;
+  }
+
+  .animate-match {
+    animation: match 0.4s ease-in-out;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes celebration {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes match {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); filter: brightness(1.3); }
+  100% { transform: scale(0); opacity: 0; }
+}
