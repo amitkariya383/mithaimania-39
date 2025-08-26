@@ -39,11 +39,13 @@ interface GameBoardProps {
   onLevelComplete: () => void;
   currentLevel: number;
   levelCompleted?: boolean;
+  onFireworksNextLevel: () => void;
+  onFireworksStayHere: () => void;
 }
 
 const BOARD_SIZE = 8;
 
-export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate, onLevelComplete, currentLevel, levelCompleted = false }) => {
+export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate, onLevelComplete, currentLevel, levelCompleted = false, onFireworksNextLevel, onFireworksStayHere }) => {
   // Get difficulty settings
   const getDifficultySettings = useCallback(() => {
     switch (difficulty) {
@@ -465,6 +467,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         show={showFireworks} 
         onComplete={() => setShowFireworks(false)} 
         nextLevel={currentLevel + 1}
+        onNextLevel={onFireworksNextLevel}
+        onStayHere={onFireworksStayHere}
       />
     </Card>
   );

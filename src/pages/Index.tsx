@@ -77,25 +77,22 @@ const Index: React.FC = () => {
     setLevelCompleted(true);
     setLevelCompletedShown(true);
 
-    toast(`🎊 Level ${currentLevel} Complete!`, {
-      description: `Bonus: +${bonus} points | Choose your next action`,
-      action: {
-        label: "🚀 Next Level",
-        onClick: () => handleNextLevel(),
-      },
-      cancel: {
-        label: "Stay Here",
-        onClick: () => {
-          setLevelCompleted(false);
-          setLevelCompletedShown(false);
-          toast("👍 Continue playing this level!", {
-            description: "You can replay or try for a higher score"
-          });
-        },
-      },
-      duration: 10000, // Keep open longer for user decision
+    // Fireworks will handle the UI for level completion
+  }, [currentLevel, totalScore, levelScore, completedLevels, levelCompletedShown]);
+
+  const handleFireworksNextLevel = useCallback(() => {
+    handleNextLevel();
+    setLevelCompleted(false);
+    setLevelCompletedShown(false);
+  }, [handleNextLevel]);
+
+  const handleFireworksStayHere = useCallback(() => {
+    setLevelCompleted(false);
+    setLevelCompletedShown(false);
+    toast("👍 Continue playing this level!", {
+      description: "You can replay or try for a higher score"
     });
-  }, [currentLevel, totalScore, levelScore, completedLevels, handleNextLevel, levelCompletedShown]);
+  }, []);
 
   const handleLevelSelectOpen = () => setShowLevelSelection(true);
   const handleLevelSelectClose = () => setShowLevelSelection(false);
@@ -170,6 +167,8 @@ const Index: React.FC = () => {
             onLevelComplete={handleLevelComplete}
             currentLevel={currentLevel}
             levelCompleted={levelCompleted}
+            onFireworksNextLevel={handleFireworksNextLevel}
+            onFireworksStayHere={handleFireworksStayHere}
           />
         </div>
 

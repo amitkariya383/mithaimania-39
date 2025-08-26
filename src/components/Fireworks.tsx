@@ -4,6 +4,8 @@ interface FireworksProps {
   show: boolean;
   onComplete?: () => void;
   nextLevel?: number;
+  onNextLevel?: () => void;
+  onStayHere?: () => void;
 }
 
 interface Particle {
@@ -18,9 +20,9 @@ interface Particle {
   size: number;
 }
 
-export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLevel }) => {
+export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLevel, onNextLevel, onStayHere }) => {
   const [particles, setParticles] = useState<Particle[]>([]);
-  const [showNextLevel, setShowNextLevel] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
 
   const colors = [
     'hsl(var(--primary))',
@@ -59,6 +61,7 @@ export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLeve
   useEffect(() => {
     if (!show) {
       setParticles([]);
+      setShowButtons(false);
       return;
     }
 
@@ -80,23 +83,13 @@ export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLeve
       }, delay);
     });
 
-    // Show next level after initial celebration
-    const showNext = setTimeout(() => {
-      if (nextLevel) {
-        setShowNextLevel(true);
-      }
+    // Show buttons after initial celebration
+    const showBtns = setTimeout(() => {
+      setShowButtons(true);
     }, 2000);
 
-    // Clean up after animation
-    const cleanup = setTimeout(() => {
-      setParticles([]);
-      setShowNextLevel(false);
-      onComplete?.();
-    }, nextLevel ? 4000 : 3000);
-
     return () => {
-      clearTimeout(cleanup);
-      clearTimeout(showNext);
+      clearTimeout(showBtns);
     };
   }, [show, onComplete, nextLevel]);
 
@@ -141,8 +134,8 @@ export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLeve
         ))}
       </svg>
       
-      {/* Celebration text */}
-      {show && !showNextLevel && (
+      {/* Celebration text with buttons */}
+      {show && !showButtons && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm">
           <div className="text-center animate-scale-in bg-background/95 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-primary/20">
             <h2 className="text-4xl md:text-6xl font-bold text-primary animate-bounce drop-shadow-lg">
@@ -160,18 +153,31 @@ export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLeve
         </div>
       )}
       
-      {/* Next level text */}
-      {show && showNextLevel && nextLevel && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+      {/* Level complete with action buttons */}
+      {show && showButtons && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm pointer-events-auto">
           <div className="text-center animate-scale-in bg-background/95 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-primary/20">
-            <h2 className="text-3xl md:text-5xl font-bold text-primary animate-pulse drop-shadow-lg">
-              🚀 Next Level {nextLevel} 🚀
+            <h2 className="text-3xl md:text-5xl font-bold text-primary drop-shadow-lg">
+              🎊 Level Complete! 🎊
             </h2>
-            <p className="text-lg md:text-xl text-foreground mt-4 animate-fade-in font-semibold">
-              Get Ready for More Fun!
+            <p className="text-lg md:text-xl text-foreground mt-4 font-semibold">
+              Choose your next action:
             </p>
-            <div className="mt-4 animate-bounce">
-              <span className="text-4xl">🎯</span>
+            <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+              {nextLevel && (
+                <button
+                  onClick={onNextLevel}
+                  className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-lg"
+                >
+                  🚀 Next Level {nextLevel}
+                </button>
+              )}
+              <button
+                onClick={onStayHere}
+                className="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-secondary/90 transition-colors shadow-lg"
+              >
+                🏆 Stay Here
+              </button>
             </div>
           </div>
         </div>
