@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -7,7 +6,6 @@ import { toast } from "sonner";
 import { useSound } from "@/hooks/useSound";
 import { DifficultyMode } from "@/components/DifficultySelection";
 import { Fireworks } from "@/components/Fireworks";
-
 // Import mithai images
 import laddooImg from "@/assets/laddoo.png";
 import barfiImg from "@/assets/barfi.png";
@@ -15,7 +13,6 @@ import jalebiImg from "@/assets/jalebi.png";
 import rasgullaImg from "@/assets/rasgulla.png";
 import pedaImg from "@/assets/peda.png";
 import halwaImg from "@/assets/halwa.png";
-
 // Mithai types with their images
 const MITHAI_TYPES = [
   { id: 'laddoo', name: 'Laddoo', image: laddooImg, color: 'text-yellow-600' },
@@ -25,14 +22,12 @@ const MITHAI_TYPES = [
   { id: 'peda', name: 'Peda', image: pedaImg, color: 'text-amber-700' },
   { id: 'halwa', name: 'Halwa', image: halwaImg, color: 'text-yellow-500' },
 ];
-
 interface Piece {
   id: string;
   type: string;
   row: number;
   col: number;
 }
-
 interface GameBoardProps {
   difficulty: DifficultyMode;
   onScoreUpdate: (score: number) => void;
@@ -42,9 +37,7 @@ interface GameBoardProps {
   onFireworksNextLevel: () => void;
   onFireworksStayHere: () => void;
 }
-
 const BOARD_SIZE = 8;
-
 export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate, onLevelComplete, currentLevel, levelCompleted = false, onFireworksNextLevel, onFireworksStayHere }) => {
   // Get difficulty settings
   const getDifficultySettings = useCallback(() => {
@@ -57,9 +50,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         return { moves: 30, targetScore: 500 };
     }
   }, [difficulty]);
-
   const { moves: initialMoves, targetScore } = getDifficultySettings();
-  
   const [board, setBoard] = useState<Piece[][]>([]);
   const [selectedPiece, setSelectedPiece] = useState<{ row: number; col: number } | null>(null);
   const [score, setScore] = useState(0);
@@ -67,7 +58,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   const [isAnimating, setIsAnimating] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
-  
+  const [hasShownFireworks, setHasShownFireworks] = useState(false); // Added to track if fireworks shown
   // Sound effects
   const { 
     playMatchSound, 
@@ -77,7 +68,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     playSelectSound, 
     playSwapSound 
   } = useSound();
-
   // Generate a random mithai type that doesn't create immediate matches
   const getRandomMithaiType = useCallback((board: Piece[][], row: number, col: number) => {
     const availableTypes = [...MITHAI_TYPES];
@@ -112,7 +102,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       ? availableTypes[Math.floor(Math.random() * availableTypes.length)]
       : MITHAI_TYPES[Math.floor(Math.random() * MITHAI_TYPES.length)];
   }, []);
-
   // Initialize the board without immediate matches
   const initializeBoard = useCallback(() => {
     console.log('Initializing new game board...');
@@ -137,10 +126,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     setGameComplete(false);
     setSelectedPiece(null);
     setShowFireworks(false);
+    setHasShownFireworks(false); // Reset flag on new board
     onScoreUpdate(0);
     console.log('Board initialized successfully');
   }, [getRandomMithaiType, onScoreUpdate, initialMoves]);
-
   // Check for matches (3 or more in a row/column)
   const findMatches = useCallback((currentBoard: Piece[][]) => {
     const matches: Piece[] = [];
@@ -170,7 +159,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         }
       }
     }
-
     // Check vertical matches
     for (let col = 0; col < BOARD_SIZE; col++) {
       let count = 1;
@@ -196,14 +184,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         }
       }
     }
-
     return matches;
   }, []);
-
   // Remove matches and drop pieces
   const removeMatches = useCallback((matchedPieces: Piece[]) => {
     if (matchedPieces.length === 0 || gameComplete) return;
-
     console.log(`Found ${matchedPieces.length} matches to remove`);
     setIsAnimating(true);
     
@@ -212,13 +197,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     const newScore = score + points;
     setScore(newScore);
     onScoreUpdate(newScore);
-
     // Play match sound and show celebration toast
     playMatchSound();
     toast(`🎉 Great! ${matchedPieces.length} mithai matched!`, {
       description: `+${points} points`,
     });
-
     setTimeout(() => {
       setBoard(currentBoard => {
         const newBoard = currentBoard.map(row => [...row]);
@@ -230,7 +213,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
             type: '',
           };
         });
-
         // Drop remaining pieces
         for (let col = 0; col < BOARD_SIZE; col++) {
           const column = [];
@@ -269,7 +251,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       setIsAnimating(false);
     }, 500);
   }, [score, onScoreUpdate, gameComplete, getRandomMithaiType]);
-
   // Check for matches after board changes
   useEffect(() => {
     if (board.length > 0 && !isAnimating && !gameComplete) {
@@ -280,30 +261,25 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       }
     }
   }, [board, findMatches, removeMatches, isAnimating, gameComplete]);
-
   // Handle piece selection and swapping
   const handlePieceClick = useCallback((row: number, col: number) => {
     if (isAnimating || moves <= 0 || gameComplete) {
       console.log('Click ignored - game state:', { isAnimating, moves, gameComplete });
       return;
     }
-
     console.log(`Clicked piece at [${row}, ${col}]`);
-
     if (!selectedPiece) {
       setSelectedPiece({ row, col });
       playSelectSound();
       console.log(`Selected piece at [${row}, ${col}]`);
       return;
     }
-
     // Check if clicking the same piece (deselect)
     if (selectedPiece.row === row && selectedPiece.col === col) {
       setSelectedPiece(null);
       console.log('Deselected piece');
       return;
     }
-
     // Check if adjacent
     const rowDiff = Math.abs(selectedPiece.row - row);
     const colDiff = Math.abs(selectedPiece.col - col);
@@ -355,28 +331,26 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       console.log(`Selected new piece at [${row}, ${col}]`);
     }
   }, [selectedPiece, isAnimating, moves, gameComplete, board, findMatches]);
-
   // Initialize board on mount
   useEffect(() => {
     initializeBoard();
   }, [initializeBoard]);
-
-  // Check for level completion
+  // Check for level completion and show fireworks once, prevent repeated show
   useEffect(() => {
-    if (score >= targetScore && !gameComplete && !showFireworks) {
+    if (score >= targetScore && !gameComplete && !showFireworks && !hasShownFireworks) {
       console.log('Level completed! Score:', score);
       setGameComplete(true);
       setShowFireworks(true);
+      setHasShownFireworks(true);
       playLevelCompleteSound();
       
-      // Just show fireworks, let parent handle progression
+      // Show fireworks and then call parent callback after 3 seconds
       setTimeout(() => {
         setShowFireworks(false);
         onLevelComplete();
       }, 3000);
     }
-  }, [score, gameComplete, onLevelComplete, playLevelCompleteSound, targetScore, showFireworks]);
-
+  }, [score, gameComplete, onLevelComplete, playLevelCompleteSound, targetScore, showFireworks, hasShownFireworks]);
   // Reset game state when level changes or when level is completed
   useEffect(() => {
     if (levelCompleted) {
@@ -384,19 +358,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       setShowFireworks(false);
     }
   }, [levelCompleted]);
-
-  // Reset board when level changes
+  // Reset fireworks shown flag and initialize board when level changes
   useEffect(() => {
     if (currentLevel > 1) {
       console.log(`Starting new level ${currentLevel}`);
+      setHasShownFireworks(false);
       initializeBoard();
     }
   }, [currentLevel, initializeBoard]);
-
   const getMithaiInfo = (type: string) => {
     return MITHAI_TYPES.find(m => m.id === type) || MITHAI_TYPES[0];
   };
-
   return (
     <Card className="p-6 bg-gradient-warm shadow-festive">
       <div className="mb-4 flex justify-between items-center">
@@ -419,7 +391,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
           🔄 New Game
         </Button>
       </div>
-
       <div className="grid grid-cols-8 gap-1 max-w-lg mx-auto bg-white/50 p-4 rounded-lg shadow-game">
         {board.map((row, rowIndex) =>
           row.map((piece, colIndex) => {
@@ -451,7 +422,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
           })
         )}
       </div>
-
       {(moves <= 0 || gameComplete) && (
         <div className="mt-4 text-center">
           <Button variant="hero" onClick={() => {
