@@ -86,7 +86,7 @@ export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLeve
     // Show buttons after initial celebration
     const showBtns = setTimeout(() => {
       setShowButtons(true);
-    }, 2000);
+    }, 4500);
 
     return () => {
       clearTimeout(showBtns);
