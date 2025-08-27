@@ -343,7 +343,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       setShowFireworks(true);
       setHasShownFireworks(true);
       playLevelCompleteSound();
-      onLevelComplete();
+      
+      // Show fireworks and then call parent callback after 3 seconds
+      setTimeout(() => {
+        setShowFireworks(false);
+        onLevelComplete();
+      }, 3000);
     }
   }, [score, gameComplete, onLevelComplete, playLevelCompleteSound, targetScore, showFireworks, hasShownFireworks]);
   // Reset game state when level changes or when level is completed
@@ -434,14 +439,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         show={showFireworks} 
         onComplete={() => setShowFireworks(false)} 
         nextLevel={currentLevel + 1}
-        onNextLevel={() => {
-          setShowFireworks(false);
-          onFireworksNextLevel();
-        }}
-        onStayHere={() => {
-          setShowFireworks(false);
-          onFireworksStayHere();
-        }}
+        onNextLevel={onFireworksNextLevel}
+        onStayHere={onFireworksStayHere}
       />
     </Card>
   );
