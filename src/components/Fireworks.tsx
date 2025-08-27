@@ -176,7 +176,7 @@ export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLeve
                 onClick={onStayHere}
                 className="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-secondary/90 transition-colors shadow-lg"
               >
-                🏆 Stay Here
+                🔄 Replay Level
               </button>
             </div>
           </div>
