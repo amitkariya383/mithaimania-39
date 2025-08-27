@@ -58,7 +58,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   const [isAnimating, setIsAnimating] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
-  const [hasShownFireworks, setHasShownFireworks] = useState(false); // Track if fireworks shown once
+  const [hasShownFireworks, setHasShownFireworks] = useState(false); // Added to track if fireworks shown
   // Sound effects
   const { 
     playMatchSound, 
@@ -71,6 +71,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   // Generate a random mithai type that doesn't create immediate matches
   const getRandomMithaiType = useCallback((board: Piece[][], row: number, col: number) => {
     const availableTypes = [...MITHAI_TYPES];
+    
+    // Remove types that would create horizontal matches
     if (col >= 2) {
       const leftType1 = board[row][col - 1]?.type;
       const leftType2 = board[row][col - 2]?.type;
@@ -82,6 +84,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         }
       }
     }
+    
+    // Remove types that would create vertical matches
     if (row >= 2) {
       const topType1 = board[row - 1][col]?.type;
       const topType2 = board[row - 2][col]?.type;
@@ -93,6 +97,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         }
       }
     }
+    
     return availableTypes.length > 0 
       ? availableTypes[Math.floor(Math.random() * availableTypes.length)]
       : MITHAI_TYPES[Math.floor(Math.random() * MITHAI_TYPES.length)];
@@ -101,6 +106,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   const initializeBoard = useCallback(() => {
     console.log('Initializing new game board...');
     const newBoard: Piece[][] = [];
+    
     for (let row = 0; row < BOARD_SIZE; row++) {
       newBoard[row] = [];
       for (let col = 0; col < BOARD_SIZE; col++) {
@@ -113,6 +119,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         };
       }
     }
+    
     setBoard(newBoard);
     setScore(0);
     setMoves(initialMoves);
@@ -126,10 +133,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   // Check for matches (3 or more in a row/column)
   const findMatches = useCallback((currentBoard: Piece[][]) => {
     const matches: Piece[] = [];
-    // Horizontal matches
+    
+    // Check horizontal matches
     for (let row = 0; row < BOARD_SIZE; row++) {
       let count = 1;
       let currentType = currentBoard[row][0].type;
+      
       for (let col = 1; col < BOARD_SIZE; col++) {
         if (currentBoard[row][col].type === currentType && currentType !== '') {
           count++;
@@ -143,16 +152,18 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
           currentType = currentBoard[row][col].type;
         }
       }
+      
       if (count >= 3 && currentType !== '') {
         for (let i = BOARD_SIZE - count; i < BOARD_SIZE; i++) {
           matches.push(currentBoard[row][i]);
         }
       }
     }
-    // Vertical matches
+    // Check vertical matches
     for (let col = 0; col < BOARD_SIZE; col++) {
       let count = 1;
       let currentType = currentBoard[0][col].type;
+      
       for (let row = 1; row < BOARD_SIZE; row++) {
         if (currentBoard[row][col].type === currentType && currentType !== '') {
           count++;
@@ -166,6 +177,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
           currentType = currentBoard[row][col].type;
         }
       }
+      
       if (count >= 3 && currentType !== '') {
         for (let i = BOARD_SIZE - count; i < BOARD_SIZE; i++) {
           matches.push(currentBoard[i][col]);
@@ -179,11 +191,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     if (matchedPieces.length === 0 || gameComplete) return;
     console.log(`Found ${matchedPieces.length} matches to remove`);
     setIsAnimating(true);
+    
     // Calculate score
     const points = matchedPieces.length * 10;
     const newScore = score + points;
     setScore(newScore);
     onScoreUpdate(newScore);
+    // Play match sound and show celebration toast
     playMatchSound();
     toast(`🎉 Great! ${matchedPieces.length} mithai matched!`, {
       description: `+${points} points`,
@@ -191,6 +205,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     setTimeout(() => {
       setBoard(currentBoard => {
         const newBoard = currentBoard.map(row => [...row]);
+        
         // Remove matched pieces
         matchedPieces.forEach(piece => {
           newBoard[piece.row][piece.col] = {
@@ -206,6 +221,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
               column.push(newBoard[row][col]);
             }
           }
+          
+          // Fill from bottom
           for (let row = BOARD_SIZE - 1; row >= 0; row--) {
             if (column.length > 0) {
               const piece = column.shift()!;
@@ -216,6 +233,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
                 id: `${row}-${col}`,
               };
             } else {
+              // Add new random piece
               const randomType = getRandomMithaiType(newBoard, row, col);
               newBoard[row][col] = {
                 id: `${row}-${col}`,
@@ -226,8 +244,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
             }
           }
         }
+        
         return newBoard;
       });
+      
       setIsAnimating(false);
     }, 500);
   }, [score, onScoreUpdate, gameComplete, getRandomMithaiType]);
@@ -254,38 +274,50 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       console.log(`Selected piece at [${row}, ${col}]`);
       return;
     }
+    // Check if clicking the same piece (deselect)
     if (selectedPiece.row === row && selectedPiece.col === col) {
       setSelectedPiece(null);
       console.log('Deselected piece');
       return;
     }
+    // Check if adjacent
     const rowDiff = Math.abs(selectedPiece.row - row);
     const colDiff = Math.abs(selectedPiece.col - col);
+    
     if ((rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1)) {
       console.log(`Attempting swap: [${selectedPiece.row}, ${selectedPiece.col}] with [${row}, ${col}]`);
+      
+      // Create a temporary board to test the swap
       const testBoard = board.map(boardRow => [...boardRow]);
       const temp = { ...testBoard[selectedPiece.row][selectedPiece.col] };
+      
       testBoard[selectedPiece.row][selectedPiece.col] = {
         ...testBoard[row][col],
         row: selectedPiece.row,
         col: selectedPiece.col,
         id: `${selectedPiece.row}-${selectedPiece.col}`
       };
+      
       testBoard[row][col] = {
         ...temp,
         row: row,
         col: col,
         id: `${row}-${col}`
       };
+      
+      // Check if this swap creates matches
       const matches = findMatches(testBoard);
+      
       if (matches.length > 0) {
         console.log(`Valid swap - will create ${matches.length} matches`);
+        // Valid move - apply the swap
         playSwapSound();
         setBoard(testBoard);
         setMoves(moves - 1);
         setSelectedPiece(null);
       } else {
         console.log('Invalid swap - no matches created');
+        // Invalid move - just deselect
         playErrorSound();
         setSelectedPiece(null);
         toast("❌ No matches possible with this swap!", {
@@ -293,6 +325,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         });
       }
     } else {
+      // Not adjacent, select new piece
       setSelectedPiece({ row, col });
       playSelectSound();
       console.log(`Selected new piece at [${row}, ${col}]`);
@@ -302,7 +335,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   useEffect(() => {
     initializeBoard();
   }, [initializeBoard]);
-  // Show fireworks prompt on level complete without auto close; wait for user action
+  // Check for level completion and show fireworks once, prevent repeated show
   useEffect(() => {
     if (score >= targetScore && !gameComplete && !showFireworks && !hasShownFireworks) {
       console.log('Level completed! Score:', score);
@@ -310,16 +343,22 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       setShowFireworks(true);
       setHasShownFireworks(true);
       playLevelCompleteSound();
+      
+      // Show fireworks and then call parent callback after 3 seconds
+      setTimeout(() => {
+        setShowFireworks(false);
+        onLevelComplete();
+      }, 3000);
     }
-  }, [score, gameComplete, targetScore, showFireworks, hasShownFireworks, playLevelCompleteSound]);
-  // Reset game state when levelCompleted changes
+  }, [score, gameComplete, onLevelComplete, playLevelCompleteSound, targetScore, showFireworks, hasShownFireworks]);
+  // Reset game state when level changes or when level is completed
   useEffect(() => {
     if (levelCompleted) {
       setGameComplete(false);
       setShowFireworks(false);
     }
   }, [levelCompleted]);
-  // Reset and initialize board on level change
+  // Reset fireworks shown flag and initialize board when level changes
   useEffect(() => {
     if (currentLevel > 1) {
       console.log(`Starting new level ${currentLevel}`);
@@ -357,6 +396,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
           row.map((piece, colIndex) => {
             const mithai = getMithaiInfo(piece.type);
             const isSelected = selectedPiece?.row === rowIndex && selectedPiece?.col === colIndex;
+            
             return (
               <button
                 key={piece.id}
@@ -397,10 +437,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         show={showFireworks} 
         onComplete={() => setShowFireworks(false)} 
         nextLevel={currentLevel + 1}
-        onNextLevel={() => {
-          setShowFireworks(false);
-          onFireworksNextLevel();
-        }}
+        onNextLevel={onFireworksNextLevel}
         onStayHere={onFireworksStayHere}
       />
     </Card>
