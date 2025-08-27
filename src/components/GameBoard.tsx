@@ -370,13 +370,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     return MITHAI_TYPES.find(m => m.id === type) || MITHAI_TYPES[0];
   };
   return (
-    <Card className="p-6 bg-gradient-warm shadow-festive">
-      <div className="mb-4 flex justify-between items-center">
-        <div className="flex gap-4">
-          <Badge variant="secondary" className="text-lg px-4 py-2">
+    <Card className="p-3 sm:p-6 bg-gradient-warm shadow-festive w-full max-w-lg mx-auto">
+      <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
+        <div className="flex gap-2 sm:gap-4">
+          <Badge variant="secondary" className="text-sm sm:text-lg px-2 sm:px-4 py-1 sm:py-2">
             Score: {score}
           </Badge>
-          <Badge variant="outline" className="text-lg px-4 py-2">
+          <Badge variant="outline" className="text-sm sm:text-lg px-2 sm:px-4 py-1 sm:py-2">
             Moves: {moves}
           </Badge>
         </div>
@@ -387,11 +387,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
             playClickSound();
             initializeBoard();
           }}
+          className="text-xs sm:text-sm px-2 sm:px-3"
         >
           🔄 New Game
         </Button>
       </div>
-      <div className="grid grid-cols-8 gap-1 max-w-lg mx-auto bg-white/50 p-4 rounded-lg shadow-game">
+      <div className="grid grid-cols-8 gap-1 w-full bg-white/50 p-2 sm:p-4 rounded-lg shadow-game">
         {board.map((row, rowIndex) =>
           row.map((piece, colIndex) => {
             const mithai = getMithaiInfo(piece.type);
@@ -402,8 +403,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
                 key={piece.id}
                 onClick={() => handlePieceClick(rowIndex, colIndex)}
                 className={`
-                  aspect-square bg-white rounded-lg border-2 transition-all duration-200 
-                  hover:scale-105 hover:shadow-md active:scale-95
+                  aspect-square bg-white rounded-md sm:rounded-lg border-2 transition-all duration-200 
+                  hover:scale-105 hover:shadow-md active:scale-95 touch-manipulation
+                  min-h-[40px] min-w-[40px] sm:min-h-[50px] sm:min-w-[50px]
                   ${isSelected ? 'border-primary ring-2 ring-primary/50 scale-105' : 'border-border'}
                   ${isAnimating ? 'pointer-events-none opacity-75' : ''}
                 `}
@@ -413,7 +415,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
                   <img 
                     src={mithai.image} 
                     alt={mithai.name}
-                    className="w-full h-full object-contain p-1"
+                    className="w-full h-full object-contain p-0.5 sm:p-1"
                     draggable={false}
                   />
                 )}

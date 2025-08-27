@@ -11,31 +11,31 @@ interface WelcomeScreenProps {
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStartGame }) => {
   const { playClickSound } = useSound();
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 pattern-mandala">
-      <Card className="max-w-2xl mx-auto p-8 bg-gradient-warm shadow-festive">
+    <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 pattern-mandala">
+      <Card className="max-w-2xl mx-auto p-4 sm:p-8 bg-gradient-warm shadow-festive">
         <div className="text-center">
           <div className="mb-6">
-            <h1 className="text-5xl font-bold text-gradient-festival mb-4 animate-float">
+            <h1 className="text-3xl sm:text-5xl font-bold text-gradient-festival mb-3 sm:mb-4 animate-float">
               🍯 Mithai Mania 🍯
             </h1>
-            <h2 className="text-2xl text-foreground mb-2">
+            <h2 className="text-lg sm:text-2xl text-foreground mb-1 sm:mb-2">
               Match & Celebrate!
             </h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground text-sm sm:text-lg">
               Festival of Sweets - A Delicious Match-3 Adventure
             </p>
           </div>
 
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <img 
               src={mithaiCollectionImg} 
               alt="Colorful Indian Sweets Collection"
-              className="w-full max-w-md mx-auto rounded-lg shadow-warm"
+              className="w-full max-w-sm sm:max-w-md mx-auto rounded-lg shadow-warm"
             />
           </div>
 
-          <div className="space-y-4 mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
+          <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
               <div className="p-4 bg-white/50 rounded-lg">
                 <div className="text-2xl mb-2">🎯</div>
                 <p><strong>Match 3 or more</strong> delicious mithai to clear them and score points!</p>
@@ -55,7 +55,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStartGame }) => 
             <Button 
               variant="hero" 
               size="lg" 
-              className="w-full text-xl px-12 py-6"
+              className="w-full text-lg sm:text-xl px-8 sm:px-12 py-4 sm:py-6"
               onClick={() => {
                 playClickSound();
                 onStartGame();
@@ -64,14 +64,14 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStartGame }) => 
               🎮 Start Sweet Adventure
             </Button>
             
-            <div className="flex justify-center gap-4">
-              <Button variant="festival" size="sm" onClick={playClickSound}>
+            <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
+              <Button variant="festival" size="sm" onClick={playClickSound} className="text-xs sm:text-sm">
                 🎵 Sound On
               </Button>
-              <Button variant="celebration" size="sm" onClick={playClickSound}>
+              <Button variant="celebration" size="sm" onClick={playClickSound} className="text-xs sm:text-sm">
                 🏆 Leaderboard
               </Button>
-              <Button variant="outline" size="sm" onClick={playClickSound}>
+              <Button variant="outline" size="sm" onClick={playClickSound} className="text-xs sm:text-sm">
                 ⚙️ Settings
               </Button>
             </div>

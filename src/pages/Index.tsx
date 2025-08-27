@@ -151,7 +151,7 @@ const Index: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-2 sm:p-4">
       <div className="max-w-4xl mx-auto">
         <GameHeader
           level={currentLevel}
@@ -177,15 +177,15 @@ const Index: React.FC = () => {
           <AdBanner />
         </div>
 
-        <div className="mt-6 text-center text-muted-foreground">
-          <p className="text-sm">🎯 Goal: Score {
+        <div className="mt-4 sm:mt-6 text-center text-muted-foreground px-2">
+          <p className="text-xs sm:text-sm">🎯 Goal: Score {
             selectedDifficulty === 'easy' ? '300' : 
             selectedDifficulty === 'hard' ? '700' : '500'
           } points to complete the level</p>
-          <p className="text-xs mt-2">
+          <p className="text-xs mt-1 sm:mt-2">
             Swap adjacent mithai to create matches of 3 or more
           </p>
-          <div className="flex justify-center items-center gap-4 mt-2">
+          <div className="flex justify-center items-center gap-2 sm:gap-4 mt-1 sm:mt-2">
             <Badge variant="outline" className="text-xs">
               Difficulty: {selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1)}
             </Badge>
@@ -193,8 +193,8 @@ const Index: React.FC = () => {
         </div>
 
         {/* Footer Links */}
-        <div className="mt-8 pt-6 border-t border-muted text-center">
-          <div className="flex flex-wrap justify-center gap-4 text-sm">
+        <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-muted text-center">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 text-xs sm:text-sm">
             <Button
               variant="link"
               className="text-muted-foreground hover:text-primary p-0 h-auto"
@@ -202,7 +202,7 @@ const Index: React.FC = () => {
             >
               About
             </Button>
-            <span className="text-muted-foreground">•</span>
+            <span className="text-muted-foreground hidden sm:inline">•</span>
             <Button
               variant="link"
               className="text-muted-foreground hover:text-primary p-0 h-auto"
@@ -210,7 +210,7 @@ const Index: React.FC = () => {
             >
               Content
             </Button>
-            <span className="text-muted-foreground">•</span>
+            <span className="text-muted-foreground hidden sm:inline">•</span>
             <Button
               variant="link"
               className="text-muted-foreground hover:text-primary p-0 h-auto"
@@ -219,7 +219,7 @@ const Index: React.FC = () => {
               Privacy Policy
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground mt-3">
+          <p className="text-xs text-muted-foreground mt-2 sm:mt-3 px-4">
             © 2024 Mithai Mania. Celebrating Indian sweets and culture through gaming.
           </p>
         </div>
