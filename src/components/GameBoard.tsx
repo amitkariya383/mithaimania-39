@@ -364,8 +364,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     
     setIsDragging(false);
     
-    // Calculate which direction was dragged with mobile-friendly thresholds
-    const threshold = 25; // Reduced threshold for better mobile sensitivity
+    // Calculate which direction was dragged
+    const threshold = 30; // minimum distance to register a swipe
     const deltaX = clientX;
     const deltaY = clientY;
     
@@ -399,10 +399,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   // Mouse event handlers
   const handleMouseDown = useCallback((row: number, col: number, e: React.MouseEvent) => {
     e.preventDefault();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const startX = e.clientX - rect.left - (rect.width / 16) * (col + 0.5);
-    const startY = e.clientY - rect.top - (rect.height / 8) * (row + 0.5);
-    handleDragStart(row, col, startX, startY);
+    handleDragStart(row, col, e.clientX, e.clientY);
   }, [handleDragStart]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
@@ -423,15 +420,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     }
   }, [isDragging, dragStart, handleDragEnd]);
 
-  // Touch event handlers with improved mobile support
+  // Touch event handlers
   const handleTouchStart = useCallback((row: number, col: number, e: React.TouchEvent) => {
     e.preventDefault();
-    e.stopPropagation();
     const touch = e.touches[0];
-    const rect = e.currentTarget.getBoundingClientRect();
-    const startX = touch.clientX - rect.left - (rect.width / 16) * (col + 0.5);
-    const startY = touch.clientY - rect.top - (rect.height / 8) * (row + 0.5);
-    handleDragStart(row, col, startX, startY);
+    handleDragStart(row, col, touch.clientX, touch.clientY);
   }, [handleDragStart]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
@@ -517,16 +510,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         </Button>
       </div>
       <div 
-        className="grid grid-cols-8 gap-1 w-full bg-white/50 p-2 sm:p-4 rounded-lg shadow-game relative select-none"
+        className="grid grid-cols-8 gap-1 w-full bg-white/50 p-2 sm:p-4 rounded-lg shadow-game relative"
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        style={{
-          touchAction: 'none', // Prevent default touch behaviors like scrolling
-          userSelect: 'none'
-        }}
       >
         {board.map((row, rowIndex) =>
           row.map((piece, colIndex) => {
@@ -542,19 +531,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
                 onTouchStart={(e) => handleTouchStart(rowIndex, colIndex, e)}
                 className={`
                   aspect-square bg-white rounded-md sm:rounded-lg border-2 transition-all duration-200 
-                  hover:scale-105 hover:shadow-md active:scale-95 touch-manipulation select-none
+                  hover:scale-105 hover:shadow-md active:scale-95 touch-manipulation
                   min-h-[40px] min-w-[40px] sm:min-h-[50px] sm:min-w-[50px] relative
                   ${isSelected ? 'border-primary ring-2 ring-primary/50 scale-105' : 'border-border'}
                   ${isAnimating ? 'pointer-events-none opacity-75' : ''}
-                  ${isDraggedPiece ? 'z-10 shadow-lg' : ''}
+                  ${isDraggedPiece ? 'z-10' : ''}
                 `}
                 style={{
                   transform: isDraggedPiece 
                     ? `translate(${dragOffset.x}px, ${dragOffset.y}px) scale(1.1)` 
                     : undefined,
-                  zIndex: isDraggedPiece ? 20 : undefined,
-                  touchAction: 'none',
-                  userSelect: 'none'
+                  zIndex: isDraggedPiece ? 20 : undefined
                 }}
                 disabled={isAnimating}
               >
@@ -562,12 +549,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
                   <img 
                     src={mithai.image} 
                     alt={mithai.name}
-                    className="w-full h-full object-contain p-0.5 sm:p-1 pointer-events-none select-none"
+                    className="w-full h-full object-contain p-0.5 sm:p-1 pointer-events-none"
                     draggable={false}
-                    style={{
-                      touchAction: 'none',
-                      userSelect: 'none'
-                    }}
                   />
                 )}
               </button>
