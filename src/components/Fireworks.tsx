@@ -83,21 +83,13 @@ export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLeve
       }, delay);
     });
 
-    // Show buttons after initial celebration - increased delay for better visibility
+    // Show buttons after initial celebration
     const showBtns = setTimeout(() => {
       setShowButtons(true);
-    }, 3500);
-
-    // Auto-hide after 10 seconds of button display
-    const hideBtns = setTimeout(() => {
-      setShowButtons(false);
-      setParticles([]);
-      onComplete?.();
-    }, 13500); // 3.5s delay + 10s display time
+    }, 3000);
 
     return () => {
       clearTimeout(showBtns);
-      clearTimeout(hideBtns);
     };
   }, [show, onComplete, nextLevel]);
 
