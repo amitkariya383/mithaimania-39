@@ -164,14 +164,12 @@ export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLeve
               Choose your next action:
             </p>
             <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
-              {nextLevel && (
-                <button
-                  onClick={onNextLevel}
-                  className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-lg"
-                >
-                  🚀 Next Level {nextLevel}
-                </button>
-              )}
+              <button
+                onClick={onNextLevel}
+                className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-lg"
+              >
+                🚀 Next Level {nextLevel || ''}
+              </button>
               <button
                 onClick={onStayHere}
                 className="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-secondary/90 transition-colors shadow-lg"
