@@ -83,10 +83,10 @@ export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLeve
       }, delay);
     });
 
-    // Show buttons after initial celebration
+    // Show buttons after initial celebration - increased delay for better visibility
     const showBtns = setTimeout(() => {
       setShowButtons(true);
-    }, 2000);
+    }, 3500);
 
     return () => {
       clearTimeout(showBtns);
