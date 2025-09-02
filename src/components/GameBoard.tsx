@@ -344,14 +344,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       setHasShownFireworks(true);
       playLevelCompleteSound();
       
-      // Keep overlay open until user chooses an action
+      // Notify parent that level is complete
+      onLevelComplete();
     }
   }, [score, gameComplete, onLevelComplete, playLevelCompleteSound, targetScore, showFireworks, hasShownFireworks]);
   // Reset game state when level changes or when level is completed
   useEffect(() => {
     if (levelCompleted) {
+      console.log('Level completed flag received, resetting states');
       setGameComplete(false);
       setShowFireworks(false);
+      setHasShownFireworks(false);
     }
   }, [levelCompleted]);
   // Reset fireworks shown flag and initialize board when level changes
