@@ -86,7 +86,7 @@ export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLeve
     // Show buttons after initial celebration
     const showBtns = setTimeout(() => {
       setShowButtons(true);
-    }, 2000);
+    }, 1500);
 
     return () => {
       clearTimeout(showBtns);
@@ -165,13 +165,19 @@ export const Fireworks: React.FC<FireworksProps> = ({ show, onComplete, nextLeve
             </p>
             <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={onNextLevel}
+                onClick={() => {
+                  onNextLevel?.();
+                  setShowButtons(false);
+                }}
                 className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-lg"
               >
                 🚀 Next Level {nextLevel || ''}
               </button>
               <button
-                onClick={onStayHere}
+                onClick={() => {
+                  onStayHere?.();
+                  setShowButtons(false);
+                }}
                 className="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-secondary/90 transition-colors shadow-lg"
               >
                 🔄 Replay Level

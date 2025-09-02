@@ -344,11 +344,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       setHasShownFireworks(true);
       playLevelCompleteSound();
       
-      // Show fireworks and then call parent callback after 3 seconds
-      setTimeout(() => {
-        setShowFireworks(false);
-        onLevelComplete();
-      }, 3000);
+      // Show fireworks - buttons will stay until user clicks
+      // No auto-hide timeout, let user control when to proceed
+      onLevelComplete();
     }
   }, [score, gameComplete, onLevelComplete, playLevelCompleteSound, targetScore, showFireworks, hasShownFireworks]);
   // Reset game state when level changes or when level is completed
@@ -369,6 +367,18 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   const getMithaiInfo = (type: string) => {
     return MITHAI_TYPES.find(m => m.id === type) || MITHAI_TYPES[0];
   };
+
+  // Handler functions for fireworks
+  const handleFireworksNextLevel = useCallback(() => {
+    setShowFireworks(false);
+    onFireworksNextLevel();
+  }, [onFireworksNextLevel]);
+
+  const handleFireworksStayHere = useCallback(() => {
+    setShowFireworks(false);
+    onFireworksStayHere();
+  }, [onFireworksStayHere]);
+
   return (
     <Card className="p-3 sm:p-6 bg-gradient-warm shadow-festive w-full max-w-lg mx-auto">
       <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
@@ -439,8 +449,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         show={showFireworks} 
         onComplete={() => setShowFireworks(false)} 
         nextLevel={currentLevel + 1}
-        onNextLevel={onFireworksNextLevel}
-        onStayHere={onFireworksStayHere}
+        onNextLevel={handleFireworksNextLevel}
+        onStayHere={handleFireworksStayHere}
       />
     </Card>
   );
