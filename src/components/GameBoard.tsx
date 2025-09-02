@@ -59,12 +59,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   const [gameComplete, setGameComplete] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
   const [hasShownFireworks, setHasShownFireworks] = useState(false); // Added to track if fireworks shown
-  
-  // Drag and slide states
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState<{ row: number; col: number } | null>(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  
   // Sound effects
   const { 
     playMatchSound, 
@@ -337,117 +331,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       console.log(`Selected new piece at [${row}, ${col}]`);
     }
   }, [selectedPiece, isAnimating, moves, gameComplete, board, findMatches]);
-
-  // Handle drag start
-  const handleDragStart = useCallback((row: number, col: number, clientX: number, clientY: number) => {
-    if (isAnimating || moves <= 0 || gameComplete) return;
-    
-    setIsDragging(true);
-    setDragStart({ row, col });
-    setSelectedPiece({ row, col });
-    setDragOffset({ x: 0, y: 0 });
-    playSelectSound();
-  }, [isAnimating, moves, gameComplete, playSelectSound]);
-
-  // Handle drag move
-  const handleDragMove = useCallback((clientX: number, clientY: number) => {
-    if (!isDragging || !dragStart) return;
-    
-    // Calculate drag offset (you might want to adjust this based on your grid size)
-    const newOffset = { x: clientX, y: clientY };
-    setDragOffset(newOffset);
-  }, [isDragging, dragStart]);
-
-  // Handle drag end
-  const handleDragEnd = useCallback((clientX: number, clientY: number) => {
-    if (!isDragging || !dragStart) return;
-    
-    setIsDragging(false);
-    
-    // Calculate which direction was dragged
-    const threshold = 30; // minimum distance to register a swipe
-    const deltaX = clientX;
-    const deltaY = clientY;
-    
-    let targetRow = dragStart.row;
-    let targetCol = dragStart.col;
-    
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      // Horizontal swipe
-      if (Math.abs(deltaX) > threshold) {
-        targetCol = deltaX > 0 ? dragStart.col + 1 : dragStart.col - 1;
-      }
-    } else {
-      // Vertical swipe
-      if (Math.abs(deltaY) > threshold) {
-        targetRow = deltaY > 0 ? dragStart.row + 1 : dragStart.row - 1;
-      }
-    }
-    
-    // Check bounds
-    if (targetRow >= 0 && targetRow < BOARD_SIZE && targetCol >= 0 && targetCol < BOARD_SIZE) {
-      // Trigger the swap
-      handlePieceClick(targetRow, targetCol);
-    } else {
-      setSelectedPiece(null);
-    }
-    
-    setDragStart(null);
-    setDragOffset({ x: 0, y: 0 });
-  }, [isDragging, dragStart, handlePieceClick]);
-
-  // Mouse event handlers
-  const handleMouseDown = useCallback((row: number, col: number, e: React.MouseEvent) => {
-    e.preventDefault();
-    handleDragStart(row, col, e.clientX, e.clientY);
-  }, [handleDragStart]);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (isDragging && dragStart) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left - (rect.width / 16) * (dragStart.col + 0.5);
-      const y = e.clientY - rect.top - (rect.height / 8) * (dragStart.row + 0.5);
-      handleDragMove(x, y);
-    }
-  }, [isDragging, dragStart, handleDragMove]);
-
-  const handleMouseUp = useCallback((e: React.MouseEvent) => {
-    if (isDragging && dragStart) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left - (rect.width / 16) * (dragStart.col + 0.5);
-      const y = e.clientY - rect.top - (rect.height / 8) * (dragStart.row + 0.5);
-      handleDragEnd(x, y);
-    }
-  }, [isDragging, dragStart, handleDragEnd]);
-
-  // Touch event handlers
-  const handleTouchStart = useCallback((row: number, col: number, e: React.TouchEvent) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    handleDragStart(row, col, touch.clientX, touch.clientY);
-  }, [handleDragStart]);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (isDragging && dragStart) {
-      e.preventDefault();
-      const touch = e.touches[0];
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = touch.clientX - rect.left - (rect.width / 16) * (dragStart.col + 0.5);
-      const y = touch.clientY - rect.top - (rect.height / 8) * (dragStart.row + 0.5);
-      handleDragMove(x, y);
-    }
-  }, [isDragging, dragStart, handleDragMove]);
-
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (isDragging && dragStart) {
-      e.preventDefault();
-      const touch = e.changedTouches[0];
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = touch.clientX - rect.left - (rect.width / 16) * (dragStart.col + 0.5);
-      const y = touch.clientY - rect.top - (rect.height / 8) * (dragStart.row + 0.5);
-      handleDragEnd(x, y);
-    }
-  }, [isDragging, dragStart, handleDragEnd]);
   // Initialize board on mount
   useEffect(() => {
     initializeBoard();
@@ -509,47 +392,30 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
           🔄 New Game
         </Button>
       </div>
-      <div 
-        className="grid grid-cols-8 gap-1 w-full bg-white/50 p-2 sm:p-4 rounded-lg shadow-game relative"
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
+      <div className="grid grid-cols-8 gap-1 w-full bg-white/50 p-2 sm:p-4 rounded-lg shadow-game">
         {board.map((row, rowIndex) =>
           row.map((piece, colIndex) => {
             const mithai = getMithaiInfo(piece.type);
             const isSelected = selectedPiece?.row === rowIndex && selectedPiece?.col === colIndex;
-            const isDraggedPiece = isDragging && dragStart?.row === rowIndex && dragStart?.col === colIndex;
             
             return (
               <button
                 key={piece.id}
-                onClick={() => !isDragging && handlePieceClick(rowIndex, colIndex)}
-                onMouseDown={(e) => handleMouseDown(rowIndex, colIndex, e)}
-                onTouchStart={(e) => handleTouchStart(rowIndex, colIndex, e)}
+                onClick={() => handlePieceClick(rowIndex, colIndex)}
                 className={`
                   aspect-square bg-white rounded-md sm:rounded-lg border-2 transition-all duration-200 
                   hover:scale-105 hover:shadow-md active:scale-95 touch-manipulation
-                  min-h-[40px] min-w-[40px] sm:min-h-[50px] sm:min-w-[50px] relative
+                  min-h-[40px] min-w-[40px] sm:min-h-[50px] sm:min-w-[50px]
                   ${isSelected ? 'border-primary ring-2 ring-primary/50 scale-105' : 'border-border'}
                   ${isAnimating ? 'pointer-events-none opacity-75' : ''}
-                  ${isDraggedPiece ? 'z-10' : ''}
                 `}
-                style={{
-                  transform: isDraggedPiece 
-                    ? `translate(${dragOffset.x}px, ${dragOffset.y}px) scale(1.1)` 
-                    : undefined,
-                  zIndex: isDraggedPiece ? 20 : undefined
-                }}
                 disabled={isAnimating}
               >
                 {piece.type && (
                   <img 
                     src={mithai.image} 
                     alt={mithai.name}
-                    className="w-full h-full object-contain p-0.5 sm:p-1 pointer-events-none"
+                    className="w-full h-full object-contain p-0.5 sm:p-1"
                     draggable={false}
                   />
                 )}
