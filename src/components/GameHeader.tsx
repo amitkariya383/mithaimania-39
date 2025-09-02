@@ -3,15 +3,18 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useSound } from "@/hooks/useSound";
+import { DifficultyMode } from "@/components/DifficultySelection";
 
 interface GameHeaderProps {
   level: number;
   score: number;
+  difficulty: DifficultyMode;
   onLevelSelect: () => void;
   onShowLeaderboard: () => void;
+  onChangeDifficulty: () => void;
 }
 
-export const GameHeader: React.FC<GameHeaderProps> = ({ level, score, onLevelSelect, onShowLeaderboard }) => {
+export const GameHeader: React.FC<GameHeaderProps> = ({ level, score, difficulty, onLevelSelect, onShowLeaderboard, onChangeDifficulty }) => {
   const { playClickSound } = useSound();
   return (
     <Card className="p-3 sm:p-6 bg-gradient-festival shadow-festive mb-4 sm:mb-6">
@@ -32,7 +35,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ level, score, onLevelSel
               Score: {score}
             </Badge>
           </div>
-          <div className="flex gap-2 sm:gap-4 items-center">
+          <div className="flex gap-1 sm:gap-2 items-center flex-wrap justify-center">
             <Button 
               variant="celebration" 
               size="sm"
@@ -54,6 +57,17 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ level, score, onLevelSel
               className="bg-white/10 text-white border-white/30 hover:bg-white/20 text-xs sm:text-sm px-2 sm:px-3"
             >
               🏆 Summary
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                playClickSound();
+                onChangeDifficulty();
+              }}
+              className="bg-white/10 text-white border-white/30 hover:bg-white/20 text-xs sm:text-sm px-2 sm:px-3"
+            >
+              ⚙️ {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
             </Button>
           </div>
         </div>

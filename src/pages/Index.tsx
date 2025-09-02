@@ -111,6 +111,10 @@ const Index: React.FC = () => {
   const handleShowLeaderboard = () => setShowLeaderboard(true);
   const handleLeaderboardClose = () => setShowLeaderboard(false);
 
+  const handleChangeDifficulty = useCallback(() => {
+    setShowDifficultySelection(true);
+  }, []);
+
   if (showDifficultySelection) {
     return (
       <DifficultySelection
@@ -156,8 +160,10 @@ const Index: React.FC = () => {
         <GameHeader
           level={currentLevel}
           score={totalScore + levelScore}
+          difficulty={selectedDifficulty}
           onLevelSelect={handleLevelSelectOpen}
           onShowLeaderboard={handleShowLeaderboard}
+          onChangeDifficulty={handleChangeDifficulty}
         />
 
         <div className="flex justify-center">
