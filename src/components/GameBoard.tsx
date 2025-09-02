@@ -344,9 +344,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       setHasShownFireworks(true);
       playLevelCompleteSound();
       
-      // Show fireworks - buttons will stay until user clicks
-      // No auto-hide timeout, let user control when to proceed
-      onLevelComplete();
+      // Keep overlay open until user chooses an action
     }
   }, [score, gameComplete, onLevelComplete, playLevelCompleteSound, targetScore, showFireworks, hasShownFireworks]);
   // Reset game state when level changes or when level is completed
