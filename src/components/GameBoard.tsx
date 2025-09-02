@@ -376,9 +376,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   }, [onFireworksNextLevel]);
 
   const handleFireworksStayHere = useCallback(() => {
+    // Close overlay and reset current level state so it's playable again
     setShowFireworks(false);
+    setGameComplete(false);
+    setHasShownFireworks(false);
+    initializeBoard();
     onFireworksStayHere();
-  }, [onFireworksStayHere]);
+  }, [onFireworksStayHere, initializeBoard]);
 
   return (
     <Card className="p-3 sm:p-6 bg-gradient-warm shadow-festive w-full max-w-lg mx-auto">
