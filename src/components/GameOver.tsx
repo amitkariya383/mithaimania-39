@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSound } from "@/hooks/useSound";
+import { Frown } from "lucide-react";
 
 interface GameOverProps {
   score: number;
@@ -30,6 +31,20 @@ export const GameOver: React.FC<GameOverProps> = ({
       setTimeout(() => setIsVisible(true), 50);
     } else {
       setIsVisible(false);
+    }
+  }, [show]);
+
+  // Prevent background scroll when the overlay is visible
+  useEffect(() => {
+    if (show) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow || '';
+      };
+    } else {
+      // ensure reset if unmounted while hidden
+      document.body.style.overflow = '';
     }
   }, [show]);
 
@@ -61,7 +76,7 @@ export const GameOver: React.FC<GameOverProps> = ({
             </>
           ) : (
             <>
-              <div className="text-6xl mb-4 drop-shadow-lg">😔</div>
+              <Frown className="w-16 h-16 mb-4 text-destructive drop-shadow-lg" aria-label="Sad face" />
               <h2 className="text-3xl font-bold text-destructive mb-3 animate-pulse">
                 Game Over
               </h2>
