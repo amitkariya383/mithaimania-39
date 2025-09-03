@@ -463,6 +463,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
           initializeBoard();
         }}
         onNextLevel={gameComplete ? handleFireworksNextLevel : undefined}
+        onClose={() => setGameOver(false)}
       />
       
       <Fireworks 
