@@ -39,7 +39,7 @@ export const GameOver: React.FC<GameOverProps> = ({
   const isClose = scorePercentage >= 80;
 
   return (
-    <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all duration-300 overflow-hidden ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       <Card className={`relative p-8 bg-gradient-to-br from-background via-background/95 to-primary/5 shadow-2xl text-center max-w-lg w-full border-2 border-primary/20 transform transition-all duration-500 ${isVisible ? 'scale-100 translate-y-0' : 'scale-75 translate-y-8'}`}>
         
         {/* Decorative elements */}
@@ -61,7 +61,7 @@ export const GameOver: React.FC<GameOverProps> = ({
             </>
           ) : (
             <>
-              <div className="text-6xl mb-4 filter grayscale">😔</div>
+              <div className="text-6xl mb-4 drop-shadow-lg">😔</div>
               <h2 className="text-3xl font-bold text-destructive mb-3 animate-pulse">
                 Game Over
               </h2>
