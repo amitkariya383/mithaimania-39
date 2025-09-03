@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useSound } from "@/hooks/useSound";
 import { DifficultyMode } from "@/components/DifficultySelection";
 import { Fireworks } from "@/components/Fireworks";
+import { GameOver } from "@/components/GameOver";
 // Import mithai images
 import laddooImg from "@/assets/laddoo.png";
 import barfiImg from "@/assets/barfi.png";
@@ -57,6 +58,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   const [moves, setMoves] = useState(initialMoves);
   const [isAnimating, setIsAnimating] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
   const [hasShownFireworks, setHasShownFireworks] = useState(false); // Added to track if fireworks shown
   // Sound effects
@@ -124,6 +126,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     setScore(0);
     setMoves(initialMoves);
     setGameComplete(false);
+    setGameOver(false);
     setSelectedPiece(null);
     setShowFireworks(false);
     setHasShownFireworks(false); // Reset flag on new board
@@ -261,10 +264,18 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       }
     }
   }, [board, findMatches, removeMatches, isAnimating, gameComplete]);
+  // Check for game over when moves run out
+  useEffect(() => {
+    if (moves <= 0 && !gameComplete && !gameOver) {
+      console.log('Game over - no moves left');
+      setGameOver(true);
+    }
+  }, [moves, gameComplete, gameOver]);
+
   // Handle piece selection and swapping
   const handlePieceClick = useCallback((row: number, col: number) => {
-    if (isAnimating || moves <= 0 || gameComplete) {
-      console.log('Click ignored - game state:', { isAnimating, moves, gameComplete });
+    if (isAnimating || moves <= 0 || gameComplete || gameOver) {
+      console.log('Click ignored - game state:', { isAnimating, moves, gameComplete, gameOver });
       return;
     }
     console.log(`Clicked piece at [${row}, ${col}]`);
@@ -330,7 +341,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       playSelectSound();
       console.log(`Selected new piece at [${row}, ${col}]`);
     }
-  }, [selectedPiece, isAnimating, moves, gameComplete, board, findMatches]);
+  }, [selectedPiece, isAnimating, moves, gameComplete, gameOver, board, findMatches]);
   // Initialize board on mount
   useEffect(() => {
     initializeBoard();
@@ -353,6 +364,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     if (levelCompleted) {
       console.log('Level completed flag received, resetting states');
       setGameComplete(false);
+      setGameOver(false);
       setShowFireworks(false);
       setHasShownFireworks(false);
     }
@@ -379,6 +391,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     // Close overlay and reset current level state so it's playable again
     setShowFireworks(false);
     setGameComplete(false);
+    setGameOver(false);
     setHasShownFireworks(false);
     initializeBoard();
     onFireworksStayHere();
@@ -439,16 +452,18 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
           })
         )}
       </div>
-      {(moves <= 0 || gameComplete) && (
-        <div className="mt-4 text-center">
-          <Button variant="hero" onClick={() => {
-            playClickSound();
-            initializeBoard();
-          }}>
-            🎮 Play Again
-          </Button>
-        </div>
-      )}
+      
+      <GameOver
+        show={gameOver}
+        score={score}
+        targetScore={targetScore}
+        isLevelComplete={gameComplete}
+        onPlayAgain={() => {
+          setGameOver(false);
+          initializeBoard();
+        }}
+        onNextLevel={gameComplete ? handleFireworksNextLevel : undefined}
+      />
       
       <Fireworks 
         show={showFireworks} 
