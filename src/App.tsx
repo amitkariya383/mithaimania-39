@@ -8,7 +8,6 @@ import About from "./pages/About";
 import Content from "./pages/Content";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
-import { CandyGame } from "./pages/CandyGame";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +19,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/candy-game" element={<CandyGame />} />
           <Route path="/about" element={<About />} />
           <Route path="/content" element={<Content />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
