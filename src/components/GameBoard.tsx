@@ -61,6 +61,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   const [gameOver, setGameOver] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
   const [hasShownFireworks, setHasShownFireworks] = useState(false); // Added to track if fireworks shown
+  const [scoreAnimating, setScoreAnimating] = useState(false);
+  const [movesAnimating, setMovesAnimating] = useState(false);
   // Sound effects
   const { 
     playMatchSound, 
@@ -199,6 +201,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     const points = matchedPieces.length * 10;
     const newScore = score + points;
     setScore(newScore);
+    setScoreAnimating(true);
     onScoreUpdate(newScore);
     // Play match sound and show celebration toast
     playMatchSound();
@@ -325,6 +328,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
         playSwapSound();
         setBoard(testBoard);
         setMoves(moves - 1);
+        setMovesAnimating(true);
         setSelectedPiece(null);
       } else {
         console.log('Invalid swap - no matches created');
@@ -377,6 +381,23 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       initializeBoard();
     }
   }, [currentLevel, initializeBoard]);
+
+  // Animation effect for score updates
+  useEffect(() => {
+    if (scoreAnimating) {
+      const timer = setTimeout(() => setScoreAnimating(false), 400);
+      return () => clearTimeout(timer);
+    }
+  }, [scoreAnimating]);
+
+  // Animation effect for moves updates
+  useEffect(() => {
+    if (movesAnimating) {
+      const timer = setTimeout(() => setMovesAnimating(false), 400);
+      return () => clearTimeout(timer);
+    }
+  }, [movesAnimating]);
+
   const getMithaiInfo = (type: string) => {
     return MITHAI_TYPES.find(m => m.id === type) || MITHAI_TYPES[0];
   };
@@ -401,10 +422,20 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
     <Card className="p-3 sm:p-6 bg-gradient-warm shadow-festive w-full max-w-lg mx-auto">
       <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
         <div className="flex gap-2 sm:gap-4">
-          <Badge variant="secondary" className="text-sm sm:text-lg px-2 sm:px-4 py-1 sm:py-2">
+          <Badge 
+            variant="secondary" 
+            className={`text-sm sm:text-lg px-2 sm:px-4 py-1 sm:py-2 transform transition-all duration-300 ease-in-out hover:scale-105 ${
+              scoreAnimating ? 'animate-slide-update' : 'animate-fade-in'
+            }`}
+          >
             Score: {score}
           </Badge>
-          <Badge variant="outline" className="text-sm sm:text-lg px-2 sm:px-4 py-1 sm:py-2">
+          <Badge 
+            variant="outline" 
+            className={`text-sm sm:text-lg px-2 sm:px-4 py-1 sm:py-2 transform transition-all duration-300 ease-in-out hover:scale-105 ${
+              movesAnimating ? 'animate-slide-update' : 'animate-fade-in'
+            }`}
+          >
             Moves: {moves}
           </Badge>
         </div>
