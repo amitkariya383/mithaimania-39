@@ -56,19 +56,6 @@ export const GameOver: React.FC<GameOverProps> = ({
     <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all duration-300 overflow-hidden ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       <Card className={`relative p-8 bg-gradient-to-br from-background via-background/95 to-primary/5 shadow-2xl text-center max-w-lg w-full border-2 border-primary/20 transform transition-all duration-500 ${isVisible ? 'scale-100 translate-y-0' : 'scale-75 translate-y-8'}`}>
         
-        {/* Close button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-4 right-4 h-8 w-8 rounded-full hover:bg-destructive/10"
-          onClick={() => {
-            playClickSound();
-            onClose();
-          }}
-        >
-          <X className="h-4 w-4" />
-        </Button>
-        
         {/* Decorative elements */}
         <div className="absolute -top-4 -left-4 w-8 h-8 bg-primary/20 rounded-full animate-pulse"></div>
         <div className="absolute -top-2 -right-2 w-6 h-6 bg-accent/30 rounded-full animate-pulse delay-300"></div>
