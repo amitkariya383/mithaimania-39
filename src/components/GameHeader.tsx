@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useSound } from "@/hooks/useSound";
+import { useSoundContext } from "@/contexts/SoundContext";
 import { DifficultyMode } from "@/components/DifficultySelection";
 
 interface GameHeaderProps {
@@ -16,6 +17,7 @@ interface GameHeaderProps {
 
 export const GameHeader: React.FC<GameHeaderProps> = ({ level, score, difficulty, onLevelSelect, onShowLeaderboard, onChangeDifficulty }) => {
   const { playClickSound } = useSound();
+  const { isSoundEnabled, toggleSound } = useSoundContext();
   return (
     <Card className="p-3 sm:p-6 bg-gradient-festival shadow-festive mb-4 sm:mb-6">
       <div className="text-center">
@@ -36,6 +38,20 @@ export const GameHeader: React.FC<GameHeaderProps> = ({ level, score, difficulty
             </Badge>
           </div>
           <div className="flex gap-1 sm:gap-2 items-center flex-wrap justify-center">
+            <Button 
+              variant={isSoundEnabled ? "celebration" : "outline"} 
+              size="sm"
+              onClick={() => {
+                playClickSound();
+                toggleSound();
+              }}
+              className={isSoundEnabled 
+                ? "text-xs sm:text-sm px-2 sm:px-3" 
+                : "bg-white/10 text-white border-white/30 hover:bg-white/20 text-xs sm:text-sm px-2 sm:px-3"
+              }
+            >
+              {isSoundEnabled ? "🎵" : "🔇"}
+            </Button>
             <Button 
               variant="celebration" 
               size="sm"
