@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import mithaiCollectionImg from "@/assets/mithai-collection.jpg";
 import { useSound } from "@/hooks/useSound";
+import { useSoundContext } from "@/contexts/SoundContext";
 
 interface WelcomeScreenProps {
   onStartGame: () => void;
@@ -10,6 +11,7 @@ interface WelcomeScreenProps {
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStartGame }) => {
   const { playClickSound } = useSound();
+  const { isSoundEnabled, toggleSound } = useSoundContext();
   return (
     <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 pattern-mandala">
       <Card className="max-w-2xl mx-auto p-4 sm:p-8 bg-gradient-warm shadow-festive">
@@ -65,8 +67,16 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStartGame }) => 
             </Button>
             
             <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
-              <Button variant="festival" size="sm" onClick={playClickSound} className="text-xs sm:text-sm">
-                🎵 Sound On
+              <Button 
+                variant={isSoundEnabled ? "festival" : "outline"} 
+                size="sm" 
+                onClick={() => {
+                  playClickSound();
+                  toggleSound();
+                }} 
+                className="text-xs sm:text-sm"
+              >
+                {isSoundEnabled ? "🎵 Sound On" : "🔇 Sound Off"}
               </Button>
               <Button variant="celebration" size="sm" onClick={playClickSound} className="text-xs sm:text-sm">
                 🏆 Leaderboard
