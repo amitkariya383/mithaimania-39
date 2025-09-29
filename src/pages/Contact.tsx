@@ -87,7 +87,7 @@ const Contact: React.FC = () => {
             </div>
 
             {/* Navigation Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+            <div className="flex justify-center pt-6">
               <Button
                 onClick={() => handleNavigation('/')}
                 variant="outline"
@@ -95,12 +95,6 @@ const Contact: React.FC = () => {
               >
                 <Home className="mr-2 h-4 w-4" />
                 Back to Home
-              </Button>
-              <Button
-                onClick={() => handleNavigation('/candy-game')}
-                className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white border-0"
-              >
-                Continue Playing
               </Button>
             </div>
           </CardContent>
