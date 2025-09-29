@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import mithaiCollectionImg from "@/assets/mithai-collection.jpg";
@@ -10,6 +11,7 @@ interface WelcomeScreenProps {
 }
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStartGame }) => {
+  const navigate = useNavigate();
   const { playClickSound } = useSound();
   const { isSoundEnabled, toggleSound } = useSoundContext();
   return (
@@ -87,7 +89,53 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStartGame }) => 
             </div>
           </div>
 
-          <div className="mt-8 text-center text-xs text-muted-foreground">
+          {/* Navigation Links */}
+          <div className="mt-8 mb-6">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+              <Button
+                variant="link"
+                className="text-muted-foreground hover:text-primary text-sm"
+                onClick={() => {
+                  playClickSound();
+                  navigate('/about');
+                }}
+              >
+                About
+              </Button>
+              <Button
+                variant="link"
+                className="text-muted-foreground hover:text-primary text-sm"
+                onClick={() => {
+                  playClickSound();
+                  navigate('/content');
+                }}
+              >
+                Content
+              </Button>
+              <Button
+                variant="link"
+                className="text-muted-foreground hover:text-primary text-sm"
+                onClick={() => {
+                  playClickSound();
+                  navigate('/contact');
+                }}
+              >
+                Contact Us
+              </Button>
+              <Button
+                variant="link"
+                className="text-muted-foreground hover:text-primary text-sm"
+                onClick={() => {
+                  playClickSound();
+                  navigate('/privacy-policy');
+                }}
+              >
+                Privacy Policy
+              </Button>
+            </div>
+          </div>
+
+          <div className="mt-4 text-center text-xs text-muted-foreground">
             <p>Featuring: Laddoo • Barfi • Jalebi • Rasgulla • Peda • Halwa</p>
             <p className="mt-2">🎪 A celebration of Indian culture and sweetness 🎪</p>
           </div>
