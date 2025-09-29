@@ -30,15 +30,15 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStartGame }) => 
             </p>
           </div>
 
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-4 sm:mb-6">
             <img 
               src={mithaiCollectionImg} 
               alt="Colorful Indian Sweets Collection"
-              className="w-full max-w-xs sm:max-w-sm mx-auto rounded-lg shadow-warm"
+              className="w-full max-w-[200px] sm:max-w-[250px] mx-auto rounded-lg shadow-warm"
             />
           </div>
 
-          <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+          <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
               <div className="p-4 bg-white/50 rounded-lg">
                 <div className="text-2xl mb-2">🎯</div>
