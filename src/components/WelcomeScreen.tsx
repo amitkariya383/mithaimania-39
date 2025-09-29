@@ -34,7 +34,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStartGame }) => 
             <img 
               src={mithaiCollectionImg} 
               alt="Colorful Indian Sweets Collection"
-              className="w-full max-w-sm sm:max-w-md mx-auto rounded-lg shadow-warm"
+              className="w-full max-w-xs sm:max-w-sm mx-auto rounded-lg shadow-warm"
             />
           </div>
 
