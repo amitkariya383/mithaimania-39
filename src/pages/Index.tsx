@@ -220,6 +220,14 @@ const Index: React.FC = () => {
             <Button
               variant="link"
               className="text-muted-foreground hover:text-primary p-0 h-auto"
+              onClick={() => navigate('/contact')}
+            >
+              Contact Us
+            </Button>
+            <span className="text-muted-foreground hidden sm:inline">•</span>
+            <Button
+              variant="link"
+              className="text-muted-foreground hover:text-primary p-0 h-auto"
               onClick={() => navigate('/privacy-policy')}
             >
               Privacy Policy
