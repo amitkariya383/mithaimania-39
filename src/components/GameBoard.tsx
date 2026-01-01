@@ -60,7 +60,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
   const [gameComplete, setGameComplete] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
-  const [hasShownFireworks, setHasShownFireworks] = useState(false); // Added to track if fireworks shown
+  const [hasShownFireworks, setHasShownFireworks] = useState(false);
+  const [touchStart, setTouchStart] = useState<{ row: number; col: number; x: number; y: number } | null>(null);
   // Sound effects
   const { 
     playMatchSound, 
@@ -342,6 +343,83 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
       console.log(`Selected new piece at [${row}, ${col}]`);
     }
   }, [selectedPiece, isAnimating, moves, gameComplete, gameOver, board, findMatches]);
+
+  // Handle touch start for swipe
+  const handleTouchStart = useCallback((row: number, col: number, e: React.TouchEvent) => {
+    if (isAnimating || moves <= 0 || gameComplete || gameOver) return;
+    const touch = e.touches[0];
+    setTouchStart({ row, col, x: touch.clientX, y: touch.clientY });
+    setSelectedPiece({ row, col });
+    playSelectSound();
+  }, [isAnimating, moves, gameComplete, gameOver, playSelectSound]);
+
+  // Handle touch end for swipe
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchStart || isAnimating || moves <= 0 || gameComplete || gameOver) {
+      setTouchStart(null);
+      return;
+    }
+
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - touchStart.x;
+    const deltaY = touch.clientY - touchStart.y;
+    const minSwipeDistance = 30;
+
+    let targetRow = touchStart.row;
+    let targetCol = touchStart.col;
+
+    // Determine swipe direction
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      // Horizontal swipe
+      if (Math.abs(deltaX) >= minSwipeDistance) {
+        targetCol = deltaX > 0 ? touchStart.col + 1 : touchStart.col - 1;
+      }
+    } else {
+      // Vertical swipe
+      if (Math.abs(deltaY) >= minSwipeDistance) {
+        targetRow = deltaY > 0 ? touchStart.row + 1 : touchStart.row - 1;
+      }
+    }
+
+    // Check if target is valid
+    if (targetRow >= 0 && targetRow < BOARD_SIZE && targetCol >= 0 && targetCol < BOARD_SIZE &&
+        (targetRow !== touchStart.row || targetCol !== touchStart.col)) {
+      
+      // Try the swap
+      const testBoard = board.map(boardRow => [...boardRow]);
+      const temp = { ...testBoard[touchStart.row][touchStart.col] };
+      
+      testBoard[touchStart.row][touchStart.col] = {
+        ...testBoard[targetRow][targetCol],
+        row: touchStart.row,
+        col: touchStart.col,
+        id: `${touchStart.row}-${touchStart.col}`
+      };
+      
+      testBoard[targetRow][targetCol] = {
+        ...temp,
+        row: targetRow,
+        col: targetCol,
+        id: `${targetRow}-${targetCol}`
+      };
+      
+      const matches = findMatches(testBoard);
+      
+      if (matches.length > 0) {
+        playSwapSound();
+        setBoard(testBoard);
+        setMoves(moves - 1);
+      } else {
+        playErrorSound();
+        toast("❌ No matches possible with this swap!", {
+          description: "Try a different combination",
+        });
+      }
+    }
+
+    setTouchStart(null);
+    setSelectedPiece(null);
+  }, [touchStart, isAnimating, moves, gameComplete, gameOver, board, findMatches, playSwapSound, playErrorSound]);
   // Initialize board on mount
   useEffect(() => {
     initializeBoard();
@@ -430,9 +508,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({ difficulty, onScoreUpdate,
               <button
                 key={piece.id}
                 onClick={() => handlePieceClick(rowIndex, colIndex)}
+                onTouchStart={(e) => handleTouchStart(rowIndex, colIndex, e)}
+                onTouchEnd={handleTouchEnd}
                 className={`
                   aspect-square bg-white rounded-md sm:rounded-lg border-2 transition-all duration-200 
-                  hover:scale-105 hover:shadow-md active:scale-95 touch-manipulation
+                  hover:scale-105 hover:shadow-md active:scale-95 touch-manipulation select-none
                   min-h-[40px] min-w-[40px] sm:min-h-[50px] sm:min-w-[50px]
                   ${isSelected ? 'border-primary ring-2 ring-primary/50 scale-105' : 'border-border'}
                   ${isAnimating ? 'pointer-events-none opacity-75' : ''}
